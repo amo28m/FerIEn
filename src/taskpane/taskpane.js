@@ -2,7 +2,7 @@ const msalConfig = {
   auth: {
     clientId: 'f4602006-b304-4530-8e4e-7c31c9b3cb2e',
     authority: 'https://login.microsoftonline.com/2356b269-1a6e-4033-a730-46e40484e6b5',
-    redirectUri: 'https://localhost:3000/taskpane.html',
+    redirectUri: 'https://amo28m.github.io/FerIEn/src/taskpane/taskpane.html',
   },
   cache: {
     cacheLocation: 'localStorage',
