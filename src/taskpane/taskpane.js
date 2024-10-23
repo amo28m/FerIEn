@@ -39,8 +39,8 @@ function addProjectFields() {
   projectGroup.innerHTML = `
     <hr class="divider">
     <div class="form-group">
-      <label for="projectNumber${projectCount}">Projektnummer:</label>
-      <input type="text" id="projectNumber${projectCount}" required>
+      <label for="projectNumber${projectCount}">Projektnummer/Funktion:</label>
+      <input type="text" id="projectNumber${projectCount}" required placeholder="Projekt/Funktion ...">
     </div>
     <div class="form-group">
       <label for="projectManager${projectCount}">Projektleiter:</label>
