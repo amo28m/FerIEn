@@ -64,8 +64,20 @@ function removeProjectFields() {
   } else if (projectCount === 1) {
     const initialProjectGroup = document.getElementById('initialProject');
     if (initialProjectGroup) {
-      initialProjectGroup.innerHTML = '';
-      projectCount--;
+      initialProjectGroup.innerHTML = `
+        <div class="form-group">
+          <label for="projectNumber1">Projektnummer/Funktion:</label>
+          <input type="text" id="projectNumber1" placeholder="Projekt/Funktion ..." required>
+        </div>
+        <div class="form-group">
+          <label for="projectManager1">Projektleiter:</label>
+          <input type="text" id="projectManager1" placeholder="Email1, Email2, ...">
+        </div>
+        <div class="form-group">
+          <label for="projectDeputy1">Stellvertreter des Projektes:</label>
+          <input type="text" id="projectDeputy1" placeholder="Email1, Email2, ...">
+        </div>`;
+      projectCount = 1;
     }
   }
 }
