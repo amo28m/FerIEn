@@ -96,12 +96,10 @@ function submitHoliday(event) {
     }
   }
 
-  // Enddatum auf 23:59 Uhr setzen
-  const endDateTime = setEndDateToEndOfDay(endDate);
-
+  // Set all-day event by omitting specific time and setting the `isAllDay` parameter
   if (
     startDate &&
-    endDateTime &&
+    endDate &&
     reason &&
     deputy &&
     projectFields.every((field) => field.number && field.manager && field.deputy)
@@ -134,19 +132,20 @@ function submitHoliday(event) {
                   additionalEmail
                 );
 
-                // Erstelle Ereignis für den Ersteller mit allen Teilnehmern und Status 'frei'
+                // Create all-day event for the creator with all participants and status 'free'
                 createEvent(
                   startDate,
-                  endDateTime,
+                  endDate,
                   subject,
                   bodyContent,
                   Office.context.mailbox.userProfile.emailAddress,
                   allAttendees,
                   accessToken,
-                  'free'
+                  'free',
+                  true // `isAllDay` parameter to indicate an all-day event
                 )
                   .then((eventId) => {
-                    // Ändere den Status des Ereignisses auf 'beschäftigt'
+                    // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
                       .then(() => {
                         showConfirmationMessage('Urlaub erfolgreich eingetragen!');
@@ -179,7 +178,6 @@ function submitHoliday(event) {
     showConfirmationMessage('Bitte alle Felder ausfüllen.');
   }
 }
-
 
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
