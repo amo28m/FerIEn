@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 1;
+let projectCount = 0;
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
+      addProjectFields(); // Initiales Projekt hinzufügen
     }
   });
 });
@@ -55,17 +56,10 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 1) {
+  if (projectCount > 0) {
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
-      projectCount--;
-    }
-  } else if (projectCount === 1) {
-    // Entferne das initiale Projekt
-    const initialProjectGroup = document.getElementById('initialProject');
-    if (initialProjectGroup) {
-      initialProjectGroup.remove();
       projectCount--;
     }
   } else {
