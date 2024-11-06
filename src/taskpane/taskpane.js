@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 1;  // Start with 1 since we want one project initially added
+let projectCount = 0;  // Start with 1 since we want one project initially added
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -56,13 +56,13 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 1) { // Allow removal if there's more than 1 project
+  if (projectCount > 0) { // Allow removal if there's more than 1 project
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
       projectCount--;
     }
-  } else if (projectCount === 1) { // Remove the initial project if it's the last one left
+  } else if (projectCount === 0) { // Remove the initial project if it's the last one left
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
