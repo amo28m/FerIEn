@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 0;
+let projectCount = 0;  // Start with 0 to ensure we are consistently counting added projects
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Initiales Projekt hinzufügen
+      addProjectFields(); // Add the initial project field
     }
   });
 });
@@ -173,6 +173,8 @@ function submitHoliday(event) {
     showConfirmationMessage('Bitte alle Felder ausfüllen.');
   }
 }
+
+// Der Rest des Codes bleibt unverändert
 
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
