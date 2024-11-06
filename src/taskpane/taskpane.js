@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Add the initial project field
+      // addProjectFields(); // Initiales Projekt hinzufügen
     }
   });
 });
@@ -173,8 +173,6 @@ function submitHoliday(event) {
     showConfirmationMessage('Bitte alle Felder ausfüllen.');
   }
 }
-
-// Der Rest des Codes bleibt unverändert
 
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
