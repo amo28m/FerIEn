@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 0;  // Start with 0 to ensure we are consistently counting added projects
+let projectCount = 1;  // Start with 1 to ensure we are consistently counting added projects
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
