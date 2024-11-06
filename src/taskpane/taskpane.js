@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 0;  // Start with 0 since we will dynamically add the first project
+let projectCount = 1;  // Start with 1 since we want one project initially added
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Initiales Projekt hinzufügen, um sicherzustellen, dass immer ein Projekt vorhanden ist
+      addProjectFields(); // Add initial project field when starting
     }
   });
 });
@@ -56,7 +56,13 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 0) {
+  if (projectCount > 1) { // Allow removal if there's more than 1 project
+    const projectGroup = document.getElementById(`projectGroup${projectCount}`);
+    if (projectGroup) {
+      projectGroup.remove();
+      projectCount--;
+    }
+  } else if (projectCount === 1) { // Remove the initial project if it's the last one left
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
@@ -173,6 +179,7 @@ function submitHoliday(event) {
     showConfirmationMessage('Bitte alle Felder ausfüllen.');
   }
 }
+
 
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
