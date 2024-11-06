@@ -55,18 +55,11 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 1) {
+  if (projectCount > 0) {
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
       projectCount--;
-    }
-  } else if (projectCount === 1) {
-    // Auch das erste Projekt entfernen (in diesem Fall das initiale Projekt entfernen)
-    const initialProjectGroup = document.getElementById(`projectGroup${projectCount}`);
-    if (initialProjectGroup) {
-      initialProjectGroup.remove();
-      projectCount = 0;
     }
   } else {
     showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.'); // Show message if no projects are left
