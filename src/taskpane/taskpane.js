@@ -55,10 +55,17 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 0) {
+  if (projectCount > 1) {
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
+      projectCount--;
+    }
+  } else if (projectCount === 1) {
+    // Entferne das initiale Projekt
+    const initialProjectGroup = document.getElementById('initialProject');
+    if (initialProjectGroup) {
+      initialProjectGroup.remove();
       projectCount--;
     }
   } else {
