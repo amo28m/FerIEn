@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 0;  // Start with 0, will add the initial project dynamically
+let projectCount = 1;  // Start with 0, will add the initial project dynamically
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -135,8 +135,7 @@ function submitHoliday(event) {
                   Office.context.mailbox.userProfile.emailAddress,
                   allAttendees,
                   accessToken,
-                  'free',
-                  true // Set isAllDay parameter to true for an all-day event
+                  'free'
                 )
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
@@ -172,6 +171,7 @@ function submitHoliday(event) {
     showConfirmationMessage('Bitte alle Felder ausfüllen.');
   }
 }
+
 
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
