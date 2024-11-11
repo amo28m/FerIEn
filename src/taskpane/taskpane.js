@@ -133,17 +133,7 @@ function submitHoliday(event) {
                 );
 
                 // Create all-day event for the creator with all participants and status 'free'
-                createEvent(
-                  startDate,
-                  endDate,
-                  subject,
-                  bodyContent,
-                  Office.context.mailbox.userProfile.emailAddress,
-                  allAttendees,
-                  accessToken,
-                  'free',
-                  true // `isAllDay` parameter to indicate an all-day event
-                )
+                createEvent($1, $2, $3, $4, $5, $6, $7, 'free'$8, true)
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
