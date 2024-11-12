@@ -15,7 +15,7 @@ const loginRequest = {
 };
 
 let msalInstance;
-let projectCount = 1;  // Start with 1 since we want one project initially added
+let projectCount = 1;  // Start with 0, will add the initial project dynamically
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -56,13 +56,7 @@ function addProjectFields() {
 }
 
 function removeProjectFields() {
-  if (projectCount > 1) { // Allow removal if there's more than 1 project
-    const projectGroup = document.getElementById(`projectGroup${projectCount}`);
-    if (projectGroup) {
-      projectGroup.remove();
-      projectCount--;
-    }
-  } else if (projectCount === 1) { // Remove the initial project if it's the last one left
+  if (projectCount > 0) {
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
       projectGroup.remove();
@@ -77,7 +71,10 @@ function submitHoliday(event) {
   event.preventDefault();
 
   const startDate = document.getElementById('startDate').value;
-  const endDate = document.getElementById('endDate').value;
+  let endDate = document.getElementById('endDate').value;
+  endDate = new Date(endDate);
+  endDate.setDate(endDate.getDate() + 1);
+  endDate = endDate.toISOString().split('T')[0];
   const reason = document.getElementById('reason').value;
   const deputy = document.getElementById('deputy').value;
 
@@ -133,17 +130,7 @@ function submitHoliday(event) {
                 );
 
                 // Create all-day event for the creator with all participants and status 'free'
-                createEvent(
-                  startDate,
-                  endDate,
-                  subject,
-                  bodyContent,
-                  Office.context.mailbox.userProfile.emailAddress,
-                  allAttendees,
-                  accessToken,
-                  'free',
-                  true // `isAllDay` parameter to indicate an all-day event
-                )
+                createEvent(startDate, endDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free', true)
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
