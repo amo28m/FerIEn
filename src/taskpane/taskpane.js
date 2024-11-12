@@ -72,7 +72,6 @@ function submitHoliday(event) {
 
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
-  endDate = new Date(endDate);
   
   endDate = new Date(document.getElementById('endDate').value).toISOString().split('T')[0];
   const reason = document.getElementById('reason').value;
@@ -130,7 +129,7 @@ function submitHoliday(event) {
                 );
 
                 // Create all-day event for the creator with all participants and status 'free'
-                createEvent(startDate, endDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free', true)
+                createEvent(startDate, endDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
