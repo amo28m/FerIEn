@@ -72,9 +72,10 @@ function submitHoliday(event) {
 
   let startDate = document.getElementById('startDate').value;
   startDate = new Date(startDate);
+  startDate.setHours(0, 0, 0, 0);
   let endDate = document.getElementById('endDate').value;
   endDate = new Date(endDate);
-  endDate.setHours(23, 59, 59);
+  endDate.setHours(23, 59, 59, 999);
   endDate.setTime(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)); // Adjust for local timezone offset
   startDate.setTime(startDate.getTime() - (startDate.getTimezoneOffset() * 60000));
   
@@ -134,7 +135,7 @@ function submitHoliday(event) {
                 );
 
                 // Create all-day event for the creator with all participants and status 'free'
-                createEvent(startDate, endDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
+                createEvent(startDate.toISOString(), endDate.toISOString(), subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
