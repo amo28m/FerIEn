@@ -73,9 +73,16 @@ function submitHoliday(event) {
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
   endDate = new Date(endDate);
-  endDate.setHours(23, 59, 59);
-  
-  endDate = endDate.toISOString();
+  endDate.setHours(23, 59, 59); // Set to the end of the day in local time
+
+  // Format end date as a local ISO string without changing the time to UTC
+  const localEndDate = endDate.getFullYear() + '-' +
+    String(endDate.getMonth() + 1).padStart(2, '0') + '-' +
+    String(endDate.getDate()).padStart(2, '0') + 'T' +
+    String(endDate.getHours()).padStart(2, '0') + ':' +
+    String(endDate.getMinutes()).padStart(2, '0') + ':' +
+    String(endDate.getSeconds()).padStart(2, '0');
+
   const reason = document.getElementById('reason').value;
   const deputy = document.getElementById('deputy').value;
 
@@ -94,7 +101,6 @@ function submitHoliday(event) {
     }
   }
 
-  // Set all-day event by omitting specific time and setting the `isAllDay` parameter
   if (
     startDate &&
     endDate &&
@@ -122,7 +128,7 @@ function submitHoliday(event) {
             getUserName(accessToken)
               .then((senderName) => {
                 const subject = `${senderName}: ${reason}`;
-                const bodyContent = generateBodyContent(startDate, endDate, reason, deputy, projectFields);
+                const bodyContent = generateBodyContent(startDate, localEndDate, reason, deputy, projectFields);
 
                 const allAttendees = parseEmails(deputy).concat(
                   ...projectFields.map((field) => parseEmails(field.manager)),
@@ -131,7 +137,7 @@ function submitHoliday(event) {
                 );
 
                 // Create all-day event for the creator with all participants and status 'free'
-                createEvent(startDate, endDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
+                createEvent(startDate, localEndDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
                   .then((eventId) => {
                     // Change the status of the event to 'busy'
                     updateEventStatus(eventId, 'busy', accessToken)
