@@ -73,8 +73,8 @@ function submitHoliday(event) {
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
   endDate = new Date(endDate);
-  endDate.setDate(endDate.getDate() + 1);
-  endDate = endDate.toISOString().split('T')[0];
+  
+  endDate = new Date(document.getElementById('endDate').value).toISOString().split('T')[0];
   const reason = document.getElementById('reason').value;
   const deputy = document.getElementById('deputy').value;
 
