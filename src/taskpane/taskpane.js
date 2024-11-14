@@ -224,11 +224,11 @@ function parseEmails(emailString) {
 
   if (invalidEmails.length > 0) {
     showConfirmationMessage(`Ungültige E-Mail-Adresse(n): ${invalidEmails.join(', ')}. Bitte verwenden Sie nur @ie-group.com-Adressen.`, true);
-    return [];
   }
 
-  return emails;
+  return emails.filter((email) => isValidEmail(email));
 }
+
 
 // Erstellt ein neues Kalenderereignis
 function createEvent(
@@ -340,6 +340,11 @@ function showConfirmationMessage(message, isError = false) {
   } else {
     confirmationMessage.classList.remove('error');
   }
+
+  // Meldung nach 5 Sekunden ausblenden
+  setTimeout(() => {
+    confirmationMessage.style.display = 'none';
+  }, 10000);
 }
 
 // Generiert den Inhalt für den Nachrichtentext
