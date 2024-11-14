@@ -80,7 +80,7 @@ function removeProjectFields() {
 // Funktion zum Verarbeiten des Urlaubsformulars
 function submitHoliday(event) {
   event.preventDefault(); // Verhindert das Standardverhalten des Formulars
-  
+
   // Liest die Eingabewerte aus den Formularfeldern
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
@@ -224,11 +224,11 @@ function parseEmails(emailString) {
 
   if (invalidEmails.length > 0) {
     showConfirmationMessage(`Ungültige E-Mail-Adresse(n): ${invalidEmails.join(', ')}. Bitte verwenden Sie nur @ie-group.com-Adressen.`, true);
+    return [];
   }
 
-  return emails.filter((email) => isValidEmail(email));
+  return emails;
 }
-
 
 // Erstellt ein neues Kalenderereignis
 function createEvent(
@@ -340,11 +340,6 @@ function showConfirmationMessage(message, isError = false) {
   } else {
     confirmationMessage.classList.remove('error');
   }
-
-  // Meldung nach 5 Sekunden ausblenden
-  setTimeout(() => {
-    confirmationMessage.style.display = 'none';
-  }, 10000);
 }
 
 // Generiert den Inhalt für den Nachrichtentext
@@ -358,13 +353,13 @@ function generateBodyContent(startDate, endDate, reason, deputy, projectFields) 
     content += `Projektnummer ${index + 1}: ${field.number}, Projektleiter: ${field.manager}, Projektstellvertreter: ${field.deputy}<br>`;
   });
 
-  content += '</div>';a
+  content += '</div>';
   return content;
 }
 
 // Formatiert ein Datum im Format TT.MM.JJJJ
 function formatDate(dateString) {
-  const date = new Date(dateString);d
+  const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
