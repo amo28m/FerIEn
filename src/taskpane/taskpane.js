@@ -18,7 +18,7 @@ const loginRequest = {
 
 // Globale Variablen
 let msalInstance;
-let projectCount = 1;  // Startwert für die Anzahl der Projekte
+let projectCount = 1; // Startwert für die Anzahl der Projekte
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com'; // Zusätzliche E-Mail-Adresse
 
 // Event-Listener, der ausgeführt wird, sobald das DOM vollständig geladen ist
@@ -54,11 +54,11 @@ function addProjectFields() {
     </div>
     <div class="form-group">
       <label for="projectManager${projectCount}">Projektleiter:</label>
-      <input type="text" id="projectManager${projectCount}" required placeholder="Email1, Email2, ...">
+      <input type="text" id="projectManager${projectCount}" required placeholder="email@ie-group.com, ...">
     </div>
     <div class="form-group">
       <label for="projectDeputy${projectCount}">Stellvertreter des Projektes:</label>
-      <input type="text" id="projectDeputy${projectCount}" required placeholder="Email1, Email2, ...">
+      <input type="text" id="projectDeputy${projectCount}" required placeholder="email@ie-group.com, ...">
     </div>
   `;
   document.getElementById('additionalProjects').appendChild(projectGroup); // Fügt die Projektgruppe dem DOM hinzu
@@ -73,7 +73,7 @@ function removeProjectFields() {
       projectCount--;
     }
   } else {
-    showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.'); // Meldung anzeigen, wenn keine Projekte mehr vorhanden sind
+    showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.', true); // Meldung anzeigen, wenn keine Projekte mehr vorhanden sind
   }
 }
 
@@ -122,6 +122,24 @@ function submitHoliday(event) {
     deputy &&
     projectFields.every((field) => field.number && field.manager && field.deputy)
   ) {
+    // Überprüfen Sie die E-Mail-Adressen des Stellvertreters
+    const deputyEmails = parseEmails(deputy);
+    if (deputyEmails.length === 0) {
+      showConfirmationMessage('Bitte geben Sie mindestens eine gültige @ie-group.com E-Mail-Adresse für den Stellvertreter an.', true);
+      return;
+    }
+
+    // Überprüfen Sie die E-Mail-Adressen in den Projektfeldern
+    for (const field of projectFields) {
+      const managerEmails = parseEmails(field.manager);
+      const deputyEmails = parseEmails(field.deputy);
+
+      if (managerEmails.length === 0 || deputyEmails.length === 0) {
+        showConfirmationMessage('Bitte geben Sie gültige @ie-group.com E-Mail-Adressen für Projektleiter und Stellvertreter an.', true);
+        return;
+      }
+    }
+
     resetForm(); // Setzt das Formular zurück
 
     // Startet den Anmeldeprozess
@@ -146,7 +164,7 @@ function submitHoliday(event) {
                 const bodyContent = generateBodyContent(startDate, localEndDate, reason, deputy, projectFields); // Generiert den Nachrichtentext
 
                 // Sammelt alle E-Mail-Adressen der Teilnehmer
-                const allAttendees = parseEmails(deputy).concat(
+                const allAttendees = deputyEmails.concat(
                   ...projectFields.map((field) => parseEmails(field.manager)),
                   ...projectFields.map((field) => parseEmails(field.deputy)),
                   additionalEmail
@@ -162,50 +180,54 @@ function submitHoliday(event) {
                       })
                       .catch((error) => {
                         console.error('Fehler beim Aktualisieren des Ereignisses:', error);
-                        showConfirmationMessage('Fehler beim Aktualisieren des Ereignisses.');
+                        showConfirmationMessage('Fehler beim Aktualisieren des Ereignisses.', true);
                       });
                   })
                   .catch((error) => {
                     console.error('Fehler beim Erstellen des Ereignisses:', error);
-                    showConfirmationMessage('Fehler beim Erstellen des Ereignisses.');
+                    showConfirmationMessage('Fehler beim Erstellen des Ereignisses.', true);
                   });
               })
               .catch((error) => {
                 console.error('Fehler beim Abrufen des Benutzernamens:', error);
-                showConfirmationMessage('Fehler beim Abrufen des Benutzernamens.');
+                showConfirmationMessage('Fehler beim Abrufen des Benutzernamens.', true);
               });
           })
           .catch((error) => {
             console.error('Fehler beim Abrufen des Zugriffstokens:', error);
-            showConfirmationMessage('Fehler beim Abrufen des Zugriffstokens.');
+            showConfirmationMessage('Fehler beim Abrufen des Zugriffstokens.', true);
           });
       })
       .catch((error) => {
         console.error('Fehler bei der Anmeldung:', error);
-        showConfirmationMessage('Fehler bei der Anmeldung.');
+        showConfirmationMessage('Fehler bei der Anmeldung.', true);
       });
   } else {
-    showConfirmationMessage('Bitte alle Felder ausfüllen.'); // Meldung anzeigen, wenn Felder fehlen
+    showConfirmationMessage('Bitte alle Felder ausfüllen.', true); // Meldung anzeigen, wenn Felder fehlen
   }
 }
 
-// Hilfsfunktion zum Setzen des Enddatums auf das Tagesende
-function setEndDateToEndOfDay(endDate) {
-  return `${endDate}T23:59:00`;
+// Validiert eine E-Mail-Adresse, die auf @ie-group.com endet
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@ie-group\.com$/i;
+  return emailRegex.test(email);
 }
 
 // Funktion zum Parsen von E-Mail-Adressen aus einem String
 function parseEmails(emailString) {
-  return emailString
+  const emails = emailString
     .split(',')
     .map((email) => email.trim())
-    .filter((email) => isValidEmail(email));
-}
+    .filter((email) => email.length > 0);
 
-// Validiert eine E-Mail-Adresse
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  const invalidEmails = emails.filter((email) => !isValidEmail(email));
+
+  if (invalidEmails.length > 0) {
+    showConfirmationMessage(`Ungültige E-Mail-Adresse(n): ${invalidEmails.join(', ')}. Bitte verwenden Sie nur @ie-group.com-Adressen.`, true);
+    return [];
+  }
+
+  return emails;
 }
 
 // Erstellt ein neues Kalenderereignis
@@ -308,10 +330,16 @@ function resetForm() {
 }
 
 // Zeigt eine Bestätigungsmeldung an
-function showConfirmationMessage(message) {
+function showConfirmationMessage(message, isError = false) {
   const confirmationMessage = document.getElementById('confirmationMessage');
   confirmationMessage.innerText = message;
   confirmationMessage.style.display = 'block';
+
+  if (isError) {
+    confirmationMessage.classList.add('error');
+  } else {
+    confirmationMessage.classList.remove('error');
+  }
 }
 
 // Generiert den Inhalt für den Nachrichtentext
@@ -336,33 +364,6 @@ function formatDate(dateString) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
-}
-
-// Überprüft den Status eines Ereignisses
-function checkEventStatus(eventId, accessToken) {
-  return fetch(`https://graph.microsoft.com/v1.0/me/events/${eventId}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((error) => {
-          throw new Error(`Fehler beim Überprüfen des Ereignisses: ${error.message}`);
-        });
-      }
-      return response.json();
-    })
-    .then((event) => {
-      if (event.showAs === 'declined') {
-        console.log('Der Stellvertreter hat den Antrag abgelehnt.');
-      }
-    })
-    .catch((error) => {
-      console.error('Fehler beim Überprüfen des Ereignisses:', error);
-    });
 }
 
 // Ruft den Benutzernamen über die Microsoft Graph API ab
