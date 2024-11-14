@@ -155,15 +155,6 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="email"]:focus, s
     background: #ddd; /* Hellgraue Linie */
     margin: 20px 0;
 }
-.loading-indicator {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #eaf1fb;
-  color: #0b5394;
-  border: 1px solid #b6d4fe;
-  border-radius: 4px;
-  text-align: center;
-}
 /* Stil für Projektgruppen */
 .project-group {
     margin-bottom: 15px;
