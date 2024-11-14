@@ -1,39 +1,48 @@
+// Konfiguration für MSAL (Microsoft Authentication Library)
 const msalConfig = {
   auth: {
-    clientId: 'f4602006-b304-4530-8e4e-7c31c9b3cb2e',
-    authority: 'https://login.microsoftonline.com/2356b269-1a6e-4033-a730-46e40484e6b5',
-    redirectUri: 'https://amo28m.github.io/FerIEn/src/taskpane/taskpane.html',
+    clientId: 'f4602006-b304-4530-8e4e-7c31c9b3cb2e', // Die Client-ID Ihrer Anwendung
+    authority: 'https://login.microsoftonline.com/2356b269-1a6e-4033-a730-46e40484e6b5', // Die Autorität (Azure AD Tenant)
+    redirectUri: 'https://amo28m.github.io/FerIEn/src/taskpane/taskpane.html', // Die URI, zu der nach der Authentifizierung umgeleitet wird
   },
   cache: {
-    cacheLocation: 'localStorage',
-    storeAuthStateInCookie: true,
+    cacheLocation: 'localStorage', // Wo die Sitzungsdaten gespeichert werden
+    storeAuthStateInCookie: true, // Authentifizierungsstatus auch in Cookies speichern
   },
 };
 
+// Anmeldeanforderung mit den benötigten Berechtigungen
 const loginRequest = {
   scopes: ['Calendars.ReadWrite', 'User.Read'],
 };
 
+// Globale Variablen
 let msalInstance;
-let projectCount = 1;  // Start with 0, will add the initial project dynamically
-const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
+let projectCount = 1;  // Startwert für die Anzahl der Projekte
+const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com'; // Zusätzliche E-Mail-Adresse
 
+// Event-Listener, der ausgeführt wird, sobald das DOM vollständig geladen ist
 document.addEventListener('DOMContentLoaded', function () {
+  // Initialisiert die MSAL-Instanz
   msalInstance = new msal.PublicClientApplication(msalConfig);
 
+  // Wartet, bis Office bereit ist
   Office.onReady((info) => {
     if (info.host === Office.HostType.Outlook) {
+      // Fügt Event-Handler für das Formular und die Buttons hinzu
       document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Add initial project field when starting
+      addProjectFields(); // Fügt initial ein Projektfeld hinzu
     }
   });
 });
 
+// Funktion zum Hinzufügen von Projektfeldern
 function addProjectFields() {
-  projectCount++;
+  projectCount++; // Erhöht die Projektanzahl
 
+  // Erstellt eine neue Projektgruppe im DOM
   const projectGroup = document.createElement('div');
   projectGroup.className = 'project-group';
   projectGroup.id = `projectGroup${projectCount}`;
@@ -52,30 +61,33 @@ function addProjectFields() {
       <input type="text" id="projectDeputy${projectCount}" required placeholder="Email1, Email2, ...">
     </div>
   `;
-  document.getElementById('additionalProjects').appendChild(projectGroup);
+  document.getElementById('additionalProjects').appendChild(projectGroup); // Fügt die Projektgruppe dem DOM hinzu
 }
 
+// Funktion zum Entfernen von Projektfeldern
 function removeProjectFields() {
   if (projectCount > 0) {
     const projectGroup = document.getElementById(`projectGroup${projectCount}`);
     if (projectGroup) {
-      projectGroup.remove();
+      projectGroup.remove(); // Entfernt die letzte Projektgruppe
       projectCount--;
     }
   } else {
-    showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.'); // Show message if no projects are left
+    showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.'); // Meldung anzeigen, wenn keine Projekte mehr vorhanden sind
   }
 }
 
+// Funktion zum Verarbeiten des Urlaubsformulars
 function submitHoliday(event) {
-  event.preventDefault();
+  event.preventDefault(); // Verhindert das Standardverhalten des Formulars
 
+  // Liest die Eingabewerte aus den Formularfeldern
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
   endDate = new Date(endDate);
-  endDate.setHours(23, 59, 59); // Set to the end of the day in local time
+  endDate.setHours(23, 59, 59); // Setzt die Zeit auf Ende des Tages
 
-  // Format end date as a local ISO string without changing the time to UTC
+  // Formatiert das Enddatum korrekt
   const localEndDate = endDate.getFullYear() + '-' +
     String(endDate.getMonth() + 1).padStart(2, '0') + '-' +
     String(endDate.getDate()).padStart(2, '0') + 'T' +
@@ -86,6 +98,7 @@ function submitHoliday(event) {
   const reason = document.getElementById('reason').value;
   const deputy = document.getElementById('deputy').value;
 
+  // Sammelt alle Projektinformationen
   const projectFields = [];
   for (let i = 1; i <= projectCount; i++) {
     const projectNumber = document.getElementById(`projectNumber${i}`);
@@ -101,6 +114,7 @@ function submitHoliday(event) {
     }
   }
 
+  // Überprüft, ob alle erforderlichen Felder ausgefüllt sind
   if (
     startDate &&
     endDate &&
@@ -108,9 +122,9 @@ function submitHoliday(event) {
     deputy &&
     projectFields.every((field) => field.number && field.manager && field.deputy)
   ) {
-    // Formularfelder sofort zurücksetzen
-    resetForm();
+    resetForm(); // Setzt das Formular zurück
 
+    // Startet den Anmeldeprozess
     msalInstance
       .loginPopup(loginRequest)
       .then((loginResponse) => {
@@ -120,26 +134,28 @@ function submitHoliday(event) {
           account: account,
         };
 
+        // Fordert ein Zugriffstoken an
         msalInstance
           .acquireTokenSilent(accessTokenRequest)
           .then((tokenResponse) => {
             const accessToken = tokenResponse.accessToken;
 
-            getUserName(accessToken)
+            getUserName(accessToken) // Ruft den Benutzernamen ab
               .then((senderName) => {
-                const subject = `${senderName}: ${reason}`;
-                const bodyContent = generateBodyContent(startDate, localEndDate, reason, deputy, projectFields);
+                const subject = `${senderName}: ${reason}`; // Erstellt den Betreff
+                const bodyContent = generateBodyContent(startDate, localEndDate, reason, deputy, projectFields); // Generiert den Nachrichtentext
 
+                // Sammelt alle E-Mail-Adressen der Teilnehmer
                 const allAttendees = parseEmails(deputy).concat(
                   ...projectFields.map((field) => parseEmails(field.manager)),
                   ...projectFields.map((field) => parseEmails(field.deputy)),
                   additionalEmail
                 );
 
-                // Create all-day event for the creator with all participants and status 'free'
+                // Erstellt das Ereignis im Kalender
                 createEvent(startDate, localEndDate, subject, bodyContent, Office.context.mailbox.userProfile.emailAddress, allAttendees, accessToken, 'free')
                   .then((eventId) => {
-                    // Change the status of the event to 'busy'
+                    // Aktualisiert den Status des Ereignisses auf 'beschäftigt'
                     updateEventStatus(eventId, 'busy', accessToken)
                       .then(() => {
                         showConfirmationMessage('Urlaub erfolgreich eingetragen!');
@@ -169,14 +185,16 @@ function submitHoliday(event) {
         showConfirmationMessage('Fehler bei der Anmeldung.');
       });
   } else {
-    showConfirmationMessage('Bitte alle Felder ausfüllen.');
+    showConfirmationMessage('Bitte alle Felder ausfüllen.'); // Meldung anzeigen, wenn Felder fehlen
   }
 }
 
+// Hilfsfunktion zum Setzen des Enddatums auf das Tagesende
 function setEndDateToEndOfDay(endDate) {
   return `${endDate}T23:59:00`;
 }
 
+// Funktion zum Parsen von E-Mail-Adressen aus einem String
 function parseEmails(emailString) {
   return emailString
     .split(',')
@@ -184,11 +202,13 @@ function parseEmails(emailString) {
     .filter((email) => isValidEmail(email));
 }
 
+// Validiert eine E-Mail-Adresse
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
+// Erstellt ein neues Kalenderereignis
 function createEvent(
   startDate,
   endDateTime,
@@ -224,6 +244,7 @@ function createEvent(
     attendees: attendees,
   };
 
+  // Sendet eine Anfrage an die Microsoft Graph API zum Erstellen des Ereignisses
   return fetch('https://graph.microsoft.com/v1.0/me/events', {
     method: 'POST',
     headers: {
@@ -237,15 +258,17 @@ function createEvent(
         throw new Error(`Fehler beim Erstellen des Ereignisses für ${organizerEmail}: ${error.message}`);
       });
     }
-    return response.json().then((event) => event.id);
+    return response.json().then((event) => event.id); // Gibt die Ereignis-ID zurück
   });
 }
 
+// Aktualisiert den Status eines bestehenden Ereignisses
 function updateEventStatus(eventId, showAs, accessToken) {
   const update = {
     showAs: showAs,
   };
 
+  // Sendet eine PATCH-Anfrage an die Microsoft Graph API
   return fetch(`https://graph.microsoft.com/v1.0/me/events/${eventId}`, {
     method: 'PATCH',
     headers: {
@@ -262,6 +285,7 @@ function updateEventStatus(eventId, showAs, accessToken) {
   });
 }
 
+// Setzt das Formular zurück
 function resetForm() {
   const startDateField = document.getElementById('startDate');
   const endDateField = document.getElementById('endDate');
@@ -279,21 +303,23 @@ function resetForm() {
   if (projectManagerField) projectManagerField.value = '';
   if (projectDeputyField) projectDeputyField.value = '';
 
-  document.getElementById('additionalProjects').innerHTML = '';
-  projectCount = 1;
+  document.getElementById('additionalProjects').innerHTML = ''; // Entfernt zusätzliche Projekte
+  projectCount = 1; // Setzt die Projektanzahl zurück
 }
 
+// Zeigt eine Bestätigungsmeldung an
 function showConfirmationMessage(message) {
   const confirmationMessage = document.getElementById('confirmationMessage');
   confirmationMessage.innerText = message;
   confirmationMessage.style.display = 'block';
 }
 
+// Generiert den Inhalt für den Nachrichtentext
 function generateBodyContent(startDate, endDate, reason, deputy, projectFields) {
   let content = `<div style="font-family: Arial; font-size: 10pt;">
-                  Ferienabwesenheit von ${formatDate(startDate)} bis ${formatDate(endDate)}.<br>
-                  Vorgesetzter: ${deputy}<br>
-                  Grund: ${reason}<br>`;
+                      Ferienabwesenheit von ${formatDate(startDate)} bis ${formatDate(endDate)}.<br>
+                      Vorgesetzter: ${deputy}<br>
+                      Grund: ${reason}<br>`;
 
   projectFields.forEach((field, index) => {
     content += `Projektnummer ${index + 1}: ${field.number}, Projektleiter: ${field.manager}, Projektstellvertreter: ${field.deputy}<br>`;
@@ -303,6 +329,7 @@ function generateBodyContent(startDate, endDate, reason, deputy, projectFields) 
   return content;
 }
 
+// Formatiert ein Datum im Format TT.MM.JJJJ
 function formatDate(dateString) {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -311,6 +338,7 @@ function formatDate(dateString) {
   return `${day}.${month}.${year}`;
 }
 
+// Überprüft den Status eines Ereignisses
 function checkEventStatus(eventId, accessToken) {
   return fetch(`https://graph.microsoft.com/v1.0/me/events/${eventId}`, {
     method: 'GET',
@@ -337,6 +365,7 @@ function checkEventStatus(eventId, accessToken) {
     });
 }
 
+// Ruft den Benutzernamen über die Microsoft Graph API ab
 function getUserName(accessToken) {
   return fetch('https://graph.microsoft.com/v1.0/me', {
     method: 'GET',
