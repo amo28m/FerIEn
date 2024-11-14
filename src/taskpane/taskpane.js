@@ -80,7 +80,8 @@ function removeProjectFields() {
 // Funktion zum Verarbeiten des Urlaubsformulars
 function submitHoliday(event) {
   event.preventDefault(); // Verhindert das Standardverhalten des Formulars
-
+  document.getElementById('loadingIndicator').style.display = 'block';
+  
   // Liest die Eingabewerte aus den Formularfeldern
   const startDate = document.getElementById('startDate').value;
   let endDate = document.getElementById('endDate').value;
@@ -205,6 +206,7 @@ function submitHoliday(event) {
   } else {
     showConfirmationMessage('Bitte alle Felder ausfüllen.', true); // Meldung anzeigen, wenn Felder fehlen
   }
+   document.getElementById('loadingIndicator').style.display = 'none';
 }
 
 // Validiert eine E-Mail-Adresse, die auf @ie-group.com endet
@@ -358,13 +360,13 @@ function generateBodyContent(startDate, endDate, reason, deputy, projectFields) 
     content += `Projektnummer ${index + 1}: ${field.number}, Projektleiter: ${field.manager}, Projektstellvertreter: ${field.deputy}<br>`;
   });
 
-  content += '</div>';
+  content += '</div>';a
   return content;
 }
 
 // Formatiert ein Datum im Format TT.MM.JJJJ
 function formatDate(dateString) {
-  const date = new Date(dateString);
+  const date = new Date(dateString);d
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
