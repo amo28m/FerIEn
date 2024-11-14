@@ -160,16 +160,7 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="email"]:focus, s
 .project-group {
     margin-bottom: 15px;
 }
-/* Ladebalken */
-.loading-indicator {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #eaf1fb;
-  color: #0b5394;
-  border: 1px solid #b6d4fe;
-  border-radius: 4px;
-  text-align: center;
-}
+
 /* Zusätzliche Stile für Projektgruppen innerhalb des Containers */
 #additionalProjects .project-group {
     margin-top: 15px;
