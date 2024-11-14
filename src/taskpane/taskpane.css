@@ -135,12 +135,17 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="email"]:focus, s
 .confirmation-message {
     margin-top: 20px;
     padding: 10px;
-    background-color: #dff0d8; /* Hellgrüner Hintergrund */
-    color: #3c763d; /* Dunkelgrüner Text */
-    border: 1px solid #d6e9c6; /* Hellgrüner Rahmen */
+    background-color: #dff0d8; /* Hellgrün für Erfolgsmeldungen */
+    color: #3c763d; /* Dunkelgrün für Text */
+    border: 1px solid #d6e9c6; /* Rahmenfarbe */
     border-radius: 4px;
-    display: none; /* Standardmäßig ausgeblendet */
+    display: none;
     text-align: center;
+}
+.confirmation-message.error {
+    background-color: #f8d7da; /* Hellrot für Fehlermeldungen */
+    color: #721c24; /* Dunkelrot für Text */
+    border-color: #f5c6cb;
 }
 
 /* Stil für horizontale Trennlinien */
