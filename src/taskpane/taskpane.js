@@ -80,7 +80,6 @@ function removeProjectFields() {
 // Funktion zum Verarbeiten des Urlaubsformulars
 function submitHoliday(event) {
   event.preventDefault(); // Verhindert das Standardverhalten des Formulars
-  document.getElementById('loadingIndicator').style.display = 'block';
   
   // Liest die Eingabewerte aus den Formularfeldern
   const startDate = document.getElementById('startDate').value;
@@ -206,7 +205,6 @@ function submitHoliday(event) {
   } else {
     showConfirmationMessage('Bitte alle Felder ausfüllen.', true); // Meldung anzeigen, wenn Felder fehlen
   }
-   document.getElementById('loadingIndicator').style.display = 'none';
 }
 
 // Validiert eine E-Mail-Adresse, die auf @ie-group.com endet
