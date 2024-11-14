@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AbsenzIEn</title>
-    <meta charset="UTF-8">
+    <title>AbsenzIEn</title> <!-- Titel der Webseite -->
+    <meta charset="UTF-8"> <!-- Zeichensatz der Webseite -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="taskpane.css">
+    <!-- Responsives Design für mobile Geräte -->
+    <link rel="stylesheet" type="text/css" href="taskpane.css"> <!-- Verknüpfung mit dem CSS-Stylesheet -->
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <!-- Einbindung der Office JavaScript API -->
     <script src="https://alcdn.msauth.net/browser/2.13.1/js/msal-browser.min.js"></script>
-    <script defer src="taskpane.js"></script>
+    <!-- Einbindung der Microsoft Authentication Library (MSAL) -->
+    <script defer src="taskpane.js"></script> <!-- Verknüpfung mit dem JavaScript-Code, der später geladen wird -->
 </head>
 <body>
     <div class="container">
-        <h1>Urlaubsantrag</h1>
+        <h1>Urlaubsantrag</h1> <!-- Überschrift der Seite -->
         <form id="holidayForm">
+            <!-- Formular für den Urlaubsantrag -->
             <div class="form-group">
                 <label for="startDate">Startdatum:</label>
-                <input type="date" id="startDate" required>
+                <input type="date" id="startDate" required> <!-- Eingabefeld für das Startdatum -->
             </div>
             <div class="form-group">
                 <label for="endDate">Enddatum:</label>
-                <input type="date" id="endDate" required>
+                <input type="date" id="endDate" required> <!-- Eingabefeld für das Enddatum -->
             </div>
             <div class="form-group">
                 <label for="reason">Grund:</label>
-                <select id="reason" required>
+                <select id="reason" required> <!-- Dropdown-Auswahl für den Grund -->
                     <option value="Urlaub">Urlaub</option>
                     <option value="unbezahlter Urlaub">Krankheit</option>
                     <option value="Vaterschaft">Elternurlaub</option>
@@ -33,15 +37,22 @@
             <div class="form-group">
                 <label for="deputy">Stellvertreter/Vorgesetzter:</label>
                 <input type="text" id="deputy" placeholder="Email1, Email2, ...">
+                <!-- Eingabefeld für die E-Mail-Adressen des Stellvertreters/Vorgesetzten -->
             </div>
             <div id="additionalProjects"></div>
+            <!-- Platzhalter für zusätzliche Projekte, die dynamisch hinzugefügt werden -->
             <div class="button-group">
                 <button type="button" id="addProjectButton" class="btn-secondary">Projekt hinzufügen</button>
+                <!-- Button zum Hinzufügen von Projekten -->
                 <button type="button" id="removeProjectButton" class="btn-secondary">Projekt entfernen</button>
+                <!-- Button zum Entfernen von Projekten -->
             </div>
             <button type="submit" class="btn-primary">Senden</button>
+            <!-- Absende-Button für das Formular -->
         </form>
         <div id="confirmationMessage" class="confirmation-message"></div>
+        <!-- Bereich zur Anzeige von Bestätigungsmeldungen -->
     </div>
 </body>
 </html>
+
