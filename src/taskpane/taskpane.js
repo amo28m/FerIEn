@@ -36,18 +36,40 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
       addProjectFields(); // Fügt initial ein Projektfeld hinzu
 
-      // Nach kurzer Verzögerung: Erzwinge ein Neurendern des Formulars, um Fokusprobleme bei den statischen Feldern zu beheben
+      // Verzögere ein Neurendern des Formulars, um Fokusprobleme der initialen Felder zu umgehen
       setTimeout(() => {
-        const formHtml = holidayForm.innerHTML;
-        holidayForm.innerHTML = formHtml;
+        // Neurendern: Ersetze den HTML-Inhalt des Formulars durch sich selbst
+        holidayForm.innerHTML = holidayForm.innerHTML;
         // Hänge die Event-Handler erneut an
         holidayForm.onsubmit = submitHoliday;
         document.getElementById('addProjectButton').onclick = addProjectFields;
         document.getElementById('removeProjectButton').onclick = removeProjectFields;
+        // Rufe Funktion auf, die die statischen Felder "fixiert"
+        fixStaticFieldFocus();
       }, 500);
     }
   });
 });
+
+// Fügt den statischen Feldern zusätzliche Attribute und Event-Handler hinzu, um den Fokus zu sichern
+function fixStaticFieldFocus() {
+  const staticFieldIds = ["startDate", "endDate", "reason", "deputy"];
+  staticFieldIds.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) {
+      // Setze explizit einen tabindex, damit das Feld fokussierbar ist
+      field.setAttribute("tabindex", "0");
+      // Verhindere, dass Mousedown oder Click sofort den Fokus verlieren
+      field.addEventListener("mousedown", function(e) {
+        e.stopPropagation();
+      });
+      field.addEventListener("click", function(e) {
+        // Erzwinge den Fokus, falls er verloren geht
+        this.focus();
+      });
+    }
+  });
+}
 
 // Funktion zum Hinzufügen von Projektfeldern
 function addProjectFields() {
