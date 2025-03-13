@@ -36,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
       addProjectFields(); // Fügt initial ein Projektfeld hinzu
     }
   });
+  setTimeout(() => {
+      const form = document.getElementById('holidayForm');
+      form.innerHTML = form.innerHTML; // Erzwingt ein Neurendern der Felder
+    }, 500);
 });
 
 // Funktion zum Hinzufügen von Projektfeldern
