@@ -29,17 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
   // Wartet, bis Office bereit ist
   Office.onReady((info) => {
     if (info.host === Office.HostType.Outlook) {
+      const holidayForm = document.getElementById('holidayForm');
       // Fügt Event-Handler für das Formular und die Buttons hinzu
-      document.getElementById('holidayForm').onsubmit = submitHoliday;
+      holidayForm.onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
       addProjectFields(); // Fügt initial ein Projektfeld hinzu
+
+      // Nach kurzer Verzögerung: Erzwinge ein Neurendern des Formulars, um Fokusprobleme bei den statischen Feldern zu beheben
+      setTimeout(() => {
+        const formHtml = holidayForm.innerHTML;
+        holidayForm.innerHTML = formHtml;
+        // Hänge die Event-Handler erneut an
+        holidayForm.onsubmit = submitHoliday;
+        document.getElementById('addProjectButton').onclick = addProjectFields;
+        document.getElementById('removeProjectButton').onclick = removeProjectFields;
+      }, 500);
     }
   });
-  setTimeout(() => {
-      const form = document.getElementById('holidayForm');
-      form.innerHTML = form.innerHTML; // Erzwingt ein Neurendern der Felder
-    }, 500);
 });
 
 // Funktion zum Hinzufügen von Projektfeldern
