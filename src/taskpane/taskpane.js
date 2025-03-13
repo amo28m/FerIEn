@@ -38,6 +38,27 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+        addProjectFieldAttributes(1); // Initialisiert das erste Projektfeld korrekt
+    }, 500);
+});
+
+function addProjectFieldAttributes(projectIndex) {
+    const fields = ["projectNumber", "projectManager", "projectDeputy"];
+
+    fields.forEach(field => {
+        const input = document.getElementById(`${field}${projectIndex}`);
+        if (input) {
+            input.removeAttribute("readonly");
+            input.style.pointerEvents = "auto";
+            input.addEventListener("focus", function() {
+                console.log(`Fokus auf Feld: ${field}${projectIndex}`);
+            });
+        }
+    });
+}
+
 // Funktion zum Hinzufügen von Projektfeldern
 function addProjectFields() {
   projectCount++; // Erhöht die Projektanzahl
