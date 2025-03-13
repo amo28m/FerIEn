@@ -29,13 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Wartet, bis Office bereit ist
   Office.onReady((info) => {
     if (info.host === Office.HostType.Outlook) {
-      // Fügt Event-Handler für das Formular und die Buttons hinzu
-      document.getElementById('holidayForm').onsubmit = submitHoliday;
-      document.getElementById('addProjectButton').onclick = addProjectFields;
-      document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Fügt initial ein Projektfeld hinzu
+        setTimeout(() => location.reload(), 1000);
     }
-  });
+});
 });
 
 // Funktion zum Hinzufügen von Projektfeldern
