@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
+    <title>AbsenzIEn</title>
     <meta charset="UTF-8">
-    <title>FerIEn - Urlaub erfassen</title>
-    <link rel="stylesheet" href="taskpane.css">
-    <script src="https://alcdn.msauth.net/browser/2.31.0/js/msal-browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="taskpane.css">
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.31.0/js/msal-browser.min.js"></script>
+    <script defer src="taskpane.js"></script>
 </head>
 <body>
-    <div id="holidayFormContainer"></div>
-    <script src="taskpane.js"></script>
+    <div class="container">
+        <h1>Urlaubsantrag</h1>
+        <div id="holidayFormContainer"></div> <!-- Nur der Container bleibt -->
+    </div>
 </body>
 </html>
