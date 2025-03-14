@@ -1,103 +1,77 @@
-// Konfiguration für MSAL (Microsoft Authentication Library)
+// Deine MSAL-Konfiguration (unverändert)
 const msalConfig = {
   auth: {
-    clientId: 'f4602006-b304-4530-8e4e-7c31c9b3cb2e', // Die Client-ID Ihrer Anwendung
-    authority: 'https://login.microsoftonline.com/2356b269-1a6e-4033-a730-46e40484e6b5', // Die Autorität (Azure AD Tenant)
-    redirectUri: 'https://amo28m.github.io/FerIEn/src/taskpane/taskpane.html', // Die URI, zu der nach der Authentifizierung umgeleitet wird
+    clientId: 'f4602006-b304-4530-8e4e-7c31c9b3cb2e',
+    authority: 'https://login.microsoftonline.com/2356b269-1a6e-4033-a730-46e40484e6b5',
+    redirectUri: 'https://amo28m.github.io/FerIEn/src/taskpane/taskpane.html',
   },
   cache: {
-    cacheLocation: 'localStorage', // Wo die Sitzungsdaten gespeichert werden
-    storeAuthStateInCookie: true, // Authentifizierungsstatus auch in Cookies speichern
+    cacheLocation: 'localStorage',
+    storeAuthStateInCookie: true,
   },
 };
 
-// Anmeldeanforderung mit den benötigten Berechtigungen
 const loginRequest = {
   scopes: ['Calendars.ReadWrite', 'User.Read'],
 };
 
-// Globale Variablen
 let msalInstance;
-let projectCount = 1; // Startwert für die Anzahl der Projekte
-const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com'; // Zusätzliche E-Mail-Adresse
-/*
-document.addEventListener('DOMContentLoaded', function() {
-  const container = document.getElementById('holidayFormContainer');
+let projectCount = 0;
+const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com';
 
-  // Statisches Feld sofort hinzufügen
-  container.innerHTML = `
-    <input type="text" id="staticField" placeholder="Statisches Feld (lädt sofort)" style="padding: 10px; font-size: 14px; width: 300px; margin-bottom: 20px;" />
-  `;
-
-  // Nach 3 Sekunden dynamisch ein weiteres Feld hinzufügen
-  setTimeout(() => {
-    const dynamicInput = document.createElement('input');
-    dynamicInput.type = 'text';
-    dynamicInput.id = 'dynamicField';
-    dynamicInput.placeholder = 'Dynamisches Feld (nach 3s hinzugefügt)';
-    dynamicInput.style.padding = '10px';
-    dynamicInput.style.fontSize = '14px';
-    dynamicInput.style.width = '300px';
-    container.appendChild(dynamicInput);
-  }, 3000);
-});
-*/
-
-// Event-Listener, der ausgeführt wird, sobald das DOM vollständig geladen ist
+// Dynamische Erstellung des kompletten Formulars inkl. Standardfelder
 document.addEventListener('DOMContentLoaded', function () {
-  // Initialisiert die MSAL-Instanz
   msalInstance = new msal.PublicClientApplication(msalConfig);
 
-  // Wartet, bis Office bereit ist
   Office.onReady((info) => {
     if (info.host === Office.HostType.Outlook) {
-      const holidayForm = document.getElementById('holidayForm');
-      // Fügt Event-Handler für das Formular und die Buttons hinzu
-      holidayForm.onsubmit = submitHoliday;
+      const container = document.getElementById('holidayFormContainer');
+      container.innerHTML = `
+        <form id="holidayForm">
+          <div class="form-group">
+              <label for="startDate">Startdatum:</label>
+              <input type="date" id="startDate" required>
+          </div>
+          <div class="form-group">
+              <label for="endDate">Enddatum:</label>
+              <input type="date" id="endDate" required>
+          </div>
+          <div class="form-group">
+              <label for="reason">Grund:</label>
+              <select id="reason" required>
+                  <option value="Urlaub">Urlaub</option>
+                  <option value="unbezahlter Urlaub">Krankheit</option>
+                  <option value="Vaterschaft">Elternurlaub</option>
+                  <option value="Militär">Militär</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label for="deputy">Stellvertreter/Vorgesetzter:</label>
+              <input type="text" id="deputy" placeholder="Email1, Email2, ...">
+          </div>
+          <div id="additionalProjects"></div>
+          <div class="button-group">
+              <button type="button" id="addProjectButton" class="btn-secondary">Projekt hinzufügen</button>
+              <button type="button" id="removeProjectButton" class="btn-secondary">Projekt entfernen</button>
+          </div>
+          <button type="submit" class="btn-primary">Senden</button>
+        </form>
+        <div id="confirmationMessage" class="confirmation-message"></div>
+      `;
+
+      document.getElementById('holidayForm').onsubmit = submitHoliday;
       document.getElementById('addProjectButton').onclick = addProjectFields;
       document.getElementById('removeProjectButton').onclick = removeProjectFields;
-      addProjectFields(); // Fügt initial ein Projektfeld hinzu
 
-      // Verzögere ein Neurendern des Formulars, um Fokusprobleme der initialen Felder zu umgehen
-      setTimeout(() => {
-        // Neurendern: Ersetze den HTML-Inhalt des Formulars durch sich selbst
-        holidayForm.innerHTML = holidayForm.innerHTML;
-        // Hänge die Event-Handler erneut an
-        holidayForm.onsubmit = submitHoliday;
-        document.getElementById('addProjectButton').onclick = addProjectFields;
-        document.getElementById('removeProjectButton').onclick = removeProjectFields;
-        // Rufe Funktion auf, die die statischen Felder "fixiert"
-        fixStaticFieldFocus();
-      }, 500);
+      addProjectFields(); // erstes Projekt hinzufügen
     }
   });
 });
 
-// Fügt den statischen Feldern zusätzliche Attribute und Event-Handler hinzu, um den Fokus zu sichern
-function fixStaticFieldFocus() {
-  const staticFieldIds = ["startDate", "endDate", "reason", "deputy"];
-  staticFieldIds.forEach(id => {
-    const field = document.getElementById(id);
-    if (field) {
-      // Setze explizit einen tabindex, damit das Feld fokussierbar ist
-      field.setAttribute("tabindex", "0");
-      // Verhindere, dass Mousedown oder Click sofort den Fokus verlieren
-      field.addEventListener("mousedown", function(e) {
-        e.stopPropagation();
-      });
-      field.addEventListener("click", function(e) {
-        // Erzwinge den Fokus, falls er verloren geht
-        this.focus();
-      });
-    }
-  });
-}
-
-// Funktion zum Hinzufügen von Projektfeldern
+// Projektfelder hinzufügen (deine vorhandene Logik)
 function addProjectFields() {
-  projectCount++; // Erhöht die Projektanzahl
+  projectCount++;
 
-  // Erstellt eine neue Projektgruppe im DOM
   const projectGroup = document.createElement('div');
   projectGroup.className = 'project-group';
   projectGroup.id = `projectGroup${projectCount}`;
@@ -116,19 +90,14 @@ function addProjectFields() {
       <input type="text" id="projectDeputy${projectCount}" required placeholder="email@ie-group.com, ...">
     </div>
   `;
-  document.getElementById('additionalProjects').appendChild(projectGroup); // Fügt die Projektgruppe dem DOM hinzu
+  document.getElementById('additionalProjects').appendChild(projectGroup);
 }
 
-// Funktion zum Entfernen von Projektfeldern
+// Projektfelder entfernen
 function removeProjectFields() {
-  if (projectCount > 0) {
-    const projectGroup = document.getElementById(`projectGroup${projectCount}`);
-    if (projectGroup) {
-      projectGroup.remove(); // Entfernt die letzte Projektgruppe
-      projectCount--;
-    }
-  } else {
-    showConfirmationMessage('Es gibt keine Projekte mehr zum Entfernen.', true); // Meldung anzeigen, wenn keine Projekte mehr vorhanden sind
+  if (projectCount > 1) {
+    document.getElementById(`projectGroup${projectCount}`).remove();
+    projectCount--;
   }
 }
 
