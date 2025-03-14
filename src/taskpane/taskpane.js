@@ -21,6 +21,28 @@ let msalInstance;
 let projectCount = 1; // Startwert für die Anzahl der Projekte
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com'; // Zusätzliche E-Mail-Adresse
 
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('holidayFormContainer');
+
+  // Statisches Feld sofort hinzufügen
+  container.innerHTML = `
+    <input type="text" id="staticField" placeholder="Statisches Feld (lädt sofort)" style="padding: 10px; font-size: 14px; width: 300px; margin-bottom: 20px;" />
+  `;
+
+  // Nach 3 Sekunden dynamisch ein weiteres Feld hinzufügen
+  setTimeout(() => {
+    const dynamicInput = document.createElement('input');
+    dynamicInput.type = 'text';
+    dynamicInput.id = 'dynamicField';
+    dynamicInput.placeholder = 'Dynamisches Feld (nach 3s hinzugefügt)';
+    dynamicInput.style.padding = '10px';
+    dynamicInput.style.fontSize = '14px';
+    dynamicInput.style.width = '300px';
+    container.appendChild(dynamicInput);
+  }, 3000);
+});
+
+/*
 // Event-Listener, der ausgeführt wird, sobald das DOM vollständig geladen ist
 document.addEventListener('DOMContentLoaded', function () {
   // Initialisiert die MSAL-Instanz
@@ -50,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-
+*/
 // Fügt den statischen Feldern zusätzliche Attribute und Event-Handler hinzu, um den Fokus zu sichern
 function fixStaticFieldFocus() {
   const staticFieldIds = ["startDate", "endDate", "reason", "deputy"];
