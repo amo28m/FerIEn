@@ -20,7 +20,7 @@ const loginRequest = {
 let msalInstance;
 let projectCount = 1; // Startwert für die Anzahl der Projekte
 const additionalEmail = 'gz.ma-abwesenheiten@ie-group.com'; // Zusätzliche E-Mail-Adresse
-
+/*
 document.addEventListener('DOMContentLoaded', function() {
   const container = document.getElementById('holidayFormContainer');
 
@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     container.appendChild(dynamicInput);
   }, 3000);
 });
+*/
 
-/*
 // Event-Listener, der ausgeführt wird, sobald das DOM vollständig geladen ist
 document.addEventListener('DOMContentLoaded', function () {
   // Initialisiert die MSAL-Instanz
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-*/
+
 // Fügt den statischen Feldern zusätzliche Attribute und Event-Handler hinzu, um den Fokus zu sichern
 function fixStaticFieldFocus() {
   const staticFieldIds = ["startDate", "endDate", "reason", "deputy"];
