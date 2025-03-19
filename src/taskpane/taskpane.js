@@ -408,10 +408,39 @@ function getUserName(accessToken) {
   });
 }
 
-document.addEventListener('focusout', function (event) {
+// Verhindert ungewollten Fokusverlust in Outlook Classic
+let isUserClick = false;
+
+document.addEventListener('mousedown', function (event) {
   if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') {
-    event.stopPropagation();
-    event.preventDefault();
-    setTimeout(() => event.target.focus(), 50);
-  }
+    event.target.focus();
+  });
 }, true);
+
+document.addEventListener('focusout', function (event) {
+  if ((event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') && !isClickingAnotherField(event)) {
+    event.preventDefault();
+    setTimeout(() => event.target.focus(), 10);
+  }
+});
+
+// Hilfsfunktion: Prüft, ob das Klick-Ziel ein anderes Feld ist
+function isClickingAnotherField(event) {
+  let relatedElement = event.relatedTarget;
+  return relatedIsInputField(relatedTarget);
+}
+
+function relatedIsInput(element) {
+  return element && (element.tagName === 'INPUT' || element.tagName === 'SELECT');
+}
+
+// Fokus-Pingpong verhindern durch globalen Status
+let currentlyFocusing = false;
+
+document.querySelectorAll('input, select').forEach(input => {
+  input.addEventListener('focus', () => {
+    if (currentlyFocusing) return;
+    currentlyFocusing = true;
+    setTimeout(() => currentlyFocusing = false, 50);
+  });
+});
