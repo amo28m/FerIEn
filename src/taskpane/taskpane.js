@@ -407,3 +407,11 @@ function getUserName(accessToken) {
     return response.json().then((user) => user.displayName);
   });
 }
+
+document.addEventListener('focusout', function (event) {
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') {
+    event.stopPropagation();
+    event.preventDefault();
+    setTimeout(() => event.target.focus(), 50);
+  }
+}, true);
