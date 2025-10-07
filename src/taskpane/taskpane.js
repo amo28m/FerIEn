@@ -263,7 +263,6 @@ function createEvent(
   organizerEmail,
   attendeesEmails,
   accessToken,
-  showAs
 ) {
   const attendees = attendeesEmails.map((email) => ({
     emailAddress: {
@@ -286,7 +285,8 @@ function createEvent(
       contentType: 'HTML',
       content: bodyContent,
     },
-    showAs: showAs,
+    showAs: "free",
+    responseRequested: true,  
     attendees: attendees,
   };
 
@@ -310,12 +310,10 @@ function createEvent(
 
 // Aktualisiert den Status eines bestehenden Ereignisses
 function updateEventStatus(eventId, showAs, accessToken) {
-  const update = {
-    showAs: showAs,
-  };
+  const update = { showAs };
 
-  // Sendet eine PATCH-Anfrage an die Microsoft Graph API
-  return fetch(`https://graph.microsoft.com/v1.0/me/events/${eventId}`, {
+  // WICHTIG: sendUpdates=none verhindert, dass Empfänger-Kopien angepasst werden
+  return fetch(`https://graph.microsoft.com/v1.0/me/events/${eventId}?sendUpdates=none`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${accessToken}`,
